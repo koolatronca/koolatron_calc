@@ -17,7 +17,7 @@
         </div>
         <div class="toggles">
           <button class="toggle" id="angleModeBtn" onclick="toggleAngleMode()">DEG</button>
-          <button class="toggle inverse" id="inverseBtn" onclick="toggleInverse()">2nd</button>
+          <button class="toggle" id="shiftBtn" onclick="toggleShift()">SHIFT</button>
         </div>
       </header>
 
@@ -30,19 +30,19 @@
         <button class="utility" onclick="useAnswer()">Ans</button>
         <button class="utility" onclick="clearAll()">C</button>
         <button class="utility" onclick="backspace()">⌫</button>
-        <button class="function" id="sinBtn" onclick="trigButton('sin')">sin</button>
+        <button class="function shiftable" id="sinBtn" onclick="trigButton('sin')">sin</button>
         <button class="operator" onclick="appendOperator('/')">÷</button>
 
         <button onclick="appendValue('7')">7</button>
         <button onclick="appendValue('8')">8</button>
         <button onclick="appendValue('9')">9</button>
-        <button class="function" id="cosBtn" onclick="trigButton('cos')">cos</button>
+        <button class="function shiftable" id="cosBtn" onclick="trigButton('cos')">cos</button>
         <button class="operator" onclick="appendOperator('*')">×</button>
 
         <button onclick="appendValue('4')">4</button>
         <button onclick="appendValue('5')">5</button>
         <button onclick="appendValue('6')">6</button>
-        <button class="function" id="tanBtn" onclick="trigButton('tan')">tan</button>
+        <button class="function shiftable" id="tanBtn" onclick="trigButton('tan')">tan</button>
         <button class="operator" onclick="appendOperator('-')">−</button>
 
         <button onclick="appendValue('1')">1</button>
@@ -61,14 +61,12 @@
         <button class="secondary" onclick="appendConstant('pi')">π</button>
         <button class="secondary" onclick="smartWrap('log')">log</button>
         <button class="secondary" onclick="smartWrap('ln')">ln</button>
-      </section>
 
-      <section class="smart-bar">
-        <button onclick="smartSquare()">x²</button>
-        <button onclick="smartFactorial()">x!</button>
-        <button onclick="smartWrap('abs')">|x|</button>
-        <button onclick="toggleSign()">±</button>
-        <button onclick="appendConstant('e')">e</button>
+        <button class="secondary" onclick="smartSquare()">x²</button>
+        <button class="secondary" onclick="smartFactorial()">x!</button>
+        <button class="secondary" onclick="smartWrap('abs')">|x|</button>
+        <button class="secondary" onclick="toggleSign()">±</button>
+        <button class="secondary" onclick="appendConstant('e')">e</button>
       </section>
     </section>
   </main>
