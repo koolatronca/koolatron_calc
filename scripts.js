@@ -100,6 +100,13 @@ function fact(){
   setVal(last.before + "(" + last.part + ")!");
 }
 
+function percent(){
+  let v = val();
+  if (v === "0" || v === "Error" || /[+\-×÷^(]$/.test(v)) return;
+  const last = lastPart(v);
+  setVal(last.before + "(" + last.part + ")%");
+}
+
 function factorial(n){
   if (n < 0 || !Number.isInteger(n)) throw new Error("factorial");
   let r = 1;
@@ -119,14 +126,36 @@ function closeBrackets(s){
 
 function multiplyInsert(s){
   return s
-    .replace(/(\d|\)|π|e)(sin|cos|tan|asin|acos|atan|sqrt|log|ln|abs)/g, "$1×$2")
+    .replace(/(\d|\)|π|e)(sin|cos|tan|asin|acos|atan|sqrt|ln|abs)/g, "$1×$2")
     .replace(/(\d|\)|π|e)\(/g, "$1×(")
     .replace(/\)(\d|π|e)/g, ")×$1")
     .replace(/(π|e)(\d)/g, "$1×$2");
 }
 
+function convertSmartPercent(s){
+  // Calculator-style percent:
+  // 200+10% -> 200+(200*10/100)
+  // 200-15% -> 200-(200*15/100)
+  // 200×10% -> 200*(10/100)
+  // 200÷10% -> 200/(10/100)
+  let match = s.match(/^(.*?)([+\-×÷])\(?([0-9.]+)\)?%$/);
+  if (match){
+    const left = match[1];
+    const operator = match[2];
+    const p = match[3];
+
+    if (operator === "+" || operator === "-"){
+      return left + operator + "(" + left + "×" + p + "/100)";
+    }
+    return left + operator + "(" + p + "/100)";
+  }
+
+  return s.replace(/\(?([0-9.]+)\)?%/g, "($1/100)");
+}
+
 function toJS(s){
   s = closeBrackets(s);
+  s = convertSmartPercent(s);
   s = multiplyInsert(s);
   s = s.replace(/×/g, "*").replace(/÷/g, "/");
   s = s.replace(/π/g, "Math.PI").replace(/\be\b/g, "Math.E");
@@ -142,7 +171,6 @@ function toJS(s){
   }
 
   s = s.replace(/sqrt\(/g, "Math.sqrt(");
-  s = s.replace(/log\(/g, "Math.log10(");
   s = s.replace(/ln\(/g, "Math.log(");
   s = s.replace(/abs\(/g, "Math.abs(");
   return s;
@@ -185,6 +213,7 @@ document.addEventListener("keydown", e => {
   else if (k === "*") op("*");
   else if (k === "/") op("/");
   else if (k === "^") op("^");
+  else if (k === "%") percent();
   else if (k === "Enter") calculate();
   else if (k === "Backspace") backspace();
   else if (k === "Escape") clearAll();
