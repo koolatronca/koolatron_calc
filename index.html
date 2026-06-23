@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Koolatron Smart Calculator</title>
+  <title>Koolatron Calculator</title>
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -13,9 +13,12 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">Koolatron Utility</p>
-          <h1>Smart Calculator</h1>
+          <h1>Calculator</h1>
         </div>
-        <button class="mode-pill" id="angleModeBtn" onclick="toggleAngleMode()">DEG</button>
+        <div class="toggles">
+          <button class="toggle" id="angleModeBtn" onclick="toggleAngleMode()">DEG</button>
+          <button class="toggle inverse" id="inverseBtn" onclick="toggleInverse()">2nd</button>
+        </div>
       </header>
 
       <section class="display-panel">
@@ -23,58 +26,50 @@
         <input id="display" readonly value="0" />
       </section>
 
-      <section class="quick-row">
-        <button onclick="useAnswer()">Ans</button>
-        <button onclick="clearAll()">C</button>
-        <button onclick="backspace()">⌫</button>
-        <button onclick="smartWrap('abs')">|x|</button>
-      </section>
-
       <section class="keys">
-        <button class="fn" onclick="smartWrap('sin')">sin</button>
-        <button class="fn" onclick="smartWrap('cos')">cos</button>
-        <button class="fn" onclick="smartWrap('tan')">tan</button>
-        <button class="fn" onclick="smartWrap('sqrt')">√</button>
-        <button class="op" onclick="appendOperator('/')">÷</button>
-
-        <button class="fn" onclick="smartWrap('asin')">sin⁻¹</button>
-        <button class="fn" onclick="smartWrap('acos')">cos⁻¹</button>
-        <button class="fn" onclick="smartWrap('atan')">tan⁻¹</button>
-        <button class="fn" onclick="smartPower()">xʸ</button>
-        <button class="op" onclick="appendOperator('*')">×</button>
+        <button class="utility" onclick="useAnswer()">Ans</button>
+        <button class="utility" onclick="clearAll()">C</button>
+        <button class="utility" onclick="backspace()">⌫</button>
+        <button class="function" id="sinBtn" onclick="trigButton('sin')">sin</button>
+        <button class="operator" onclick="appendOperator('/')">÷</button>
 
         <button onclick="appendValue('7')">7</button>
         <button onclick="appendValue('8')">8</button>
         <button onclick="appendValue('9')">9</button>
-        <button class="fn" onclick="smartWrap('log')">log</button>
-        <button class="op" onclick="appendOperator('-')">−</button>
+        <button class="function" id="cosBtn" onclick="trigButton('cos')">cos</button>
+        <button class="operator" onclick="appendOperator('*')">×</button>
 
         <button onclick="appendValue('4')">4</button>
         <button onclick="appendValue('5')">5</button>
         <button onclick="appendValue('6')">6</button>
-        <button class="fn" onclick="smartWrap('ln')">ln</button>
-        <button class="op" onclick="appendOperator('+')">+</button>
+        <button class="function" id="tanBtn" onclick="trigButton('tan')">tan</button>
+        <button class="operator" onclick="appendOperator('-')">−</button>
 
         <button onclick="appendValue('1')">1</button>
         <button onclick="appendValue('2')">2</button>
         <button onclick="appendValue('3')">3</button>
-        <button class="fn" onclick="appendConstant('pi')">π</button>
-        <button class="eq" onclick="calculate()">=</button>
+        <button class="function" onclick="smartWrap('sqrt')">√</button>
+        <button class="operator" onclick="appendOperator('+')">+</button>
 
         <button class="wide" onclick="appendValue('0')">0</button>
         <button onclick="appendValue('.')">.</button>
-        <button onclick="appendValue('(')">(</button>
-        <button onclick="appendValue(')')">)</button>
-        <button class="fn" onclick="appendConstant('e')">e</button>
+        <button class="function" onclick="smartPower()">xʸ</button>
+        <button class="equals" onclick="calculate()">=</button>
 
-        <button onclick="toggleSign()">±</button>
-        <button onclick="smartSquare()">x²</button>
-        <button onclick="smartFactorial()">x!</button>
-        <button onclick="appendOperator('%')">%</button>
-        <button onclick="appendOperator('^')">^</button>
+        <button class="secondary" onclick="appendValue('(')">(</button>
+        <button class="secondary" onclick="appendValue(')')">)</button>
+        <button class="secondary" onclick="appendConstant('pi')">π</button>
+        <button class="secondary" onclick="smartWrap('log')">log</button>
+        <button class="secondary" onclick="smartWrap('ln')">ln</button>
       </section>
 
-      <p class="helper">Smart flow: type 30 then press sin → sin(30). Type 5 then press x² → (5)².</p>
+      <section class="smart-bar">
+        <button onclick="smartSquare()">x²</button>
+        <button onclick="smartFactorial()">x!</button>
+        <button onclick="smartWrap('abs')">|x|</button>
+        <button onclick="toggleSign()">±</button>
+        <button onclick="appendConstant('e')">e</button>
+      </section>
     </section>
   </main>
   <script src="scripts.js"></script>
