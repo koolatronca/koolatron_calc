@@ -1,75 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Koolatron Calculator</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app">
-    <section class="calculator">
-      <header class="topbar">
-        <div>
-          <p class="eyebrow">Koolatron Utility</p>
-          <h1>Calculator</h1>
-        </div>
-        <div class="toggles">
-          <button class="toggle" id="angleModeBtn" onclick="toggleAngleMode()">DEG</button>
-          <button class="toggle" id="shiftBtn" onclick="toggleShift()">SHIFT</button>
-        </div>
-      </header>
+  <main class="calculator">
+    <header>
+      <div>
+        <p>Koolatron Utility</p>
+        <h1>Calculator</h1>
+      </div>
+      <div class="top-buttons">
+        <button id="angleBtn" onclick="toggleAngle()">DEG</button>
+        <button id="shiftBtn" onclick="toggleShift()">SHIFT</button>
+      </div>
+    </header>
 
-      <section class="display-panel">
-        <textarea id="history" readonly placeholder="History"></textarea>
-        <input id="display" readonly value="0" />
-      </section>
+    <section class="screen">
+      <textarea id="history" readonly placeholder="History"></textarea>
+      <input id="display" readonly value="0">
+    </section>
 
-      <section class="keys">
-        <button class="utility" onclick="useAnswer()">Ans</button>
-        <button class="utility" onclick="clearAll()">C</button>
-        <button class="utility" onclick="backspace()">⌫</button>
-        <button class="function shiftable" id="sinBtn" onclick="trigButton('sin')">sin</button>
-        <button class="operator" onclick="appendOperator('/')">÷</button>
+    <section class="keys">
+      <button class="utility" onclick="useAns()">Ans</button>
+      <button class="utility" onclick="clearAll()">C</button>
+      <button class="utility" onclick="backspace()">⌫</button>
+      <button class="function" id="sinBtn" onclick="trig('sin')">sin</button>
+      <button class="operator" onclick="op('/')">÷</button>
 
-        <button onclick="appendValue('7')">7</button>
-        <button onclick="appendValue('8')">8</button>
-        <button onclick="appendValue('9')">9</button>
-        <button class="function shiftable" id="cosBtn" onclick="trigButton('cos')">cos</button>
-        <button class="operator" onclick="appendOperator('*')">×</button>
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button class="function" id="cosBtn" onclick="trig('cos')">cos</button>
+      <button class="operator" onclick="op('*')">×</button>
 
-        <button onclick="appendValue('4')">4</button>
-        <button onclick="appendValue('5')">5</button>
-        <button onclick="appendValue('6')">6</button>
-        <button class="function shiftable" id="tanBtn" onclick="trigButton('tan')">tan</button>
-        <button class="operator" onclick="appendOperator('-')">−</button>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button class="function" id="tanBtn" onclick="trig('tan')">tan</button>
+      <button class="operator" onclick="op('-')">−</button>
 
-        <button onclick="appendValue('1')">1</button>
-        <button onclick="appendValue('2')">2</button>
-        <button onclick="appendValue('3')">3</button>
-        <button class="function" onclick="smartWrap('sqrt')">√</button>
-        <button class="operator" onclick="appendOperator('+')">+</button>
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button class="function" onclick="wrap('sqrt')">√</button>
+      <button class="operator" onclick="op('+')">+</button>
 
-        <button class="wide" onclick="appendValue('0')">0</button>
-        <button onclick="appendValue('.')">.</button>
-        <button class="function" onclick="smartPower()">xʸ</button>
-        <button class="equals" onclick="calculate()">=</button>
+      <button class="wide" onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button class="function" onclick="power()">xʸ</button>
+      <button class="equals" onclick="calculate()">=</button>
 
-        <button class="secondary" onclick="appendValue('(')">(</button>
-        <button class="secondary" onclick="appendValue(')')">)</button>
-        <button class="secondary" onclick="appendConstant('pi')">π</button>
-        <button class="secondary" onclick="smartWrap('log')">log</button>
-        <button class="secondary" onclick="smartWrap('ln')">ln</button>
+      <button class="secondary" onclick="press('(')">(</button>
+      <button class="secondary" onclick="press(')')">)</button>
+      <button class="secondary" onclick="press('π')">π</button>
+      <button class="secondary" onclick="wrap('log')">log</button>
 
-        <button class="secondary" onclick="smartSquare()">x²</button>
-        <button class="secondary" onclick="smartFactorial()">x!</button>
-        <button class="secondary" onclick="smartWrap('abs')">|x|</button>
-        <button class="secondary" onclick="toggleSign()">±</button>
-        <button class="secondary" onclick="appendConstant('e')">e</button>
-      </section>
+      <button class="secondary" onclick="wrap('ln')">ln</button>
+      <button class="secondary" onclick="square()">x²</button>
+      <button class="secondary" onclick="fact()">x!</button>
+      <button class="secondary" onclick="wrap('abs')">|x|</button>
+      <button class="secondary" onclick="press('e')">e</button>
     </section>
   </main>
+
   <script src="scripts.js"></script>
 </body>
 </html>

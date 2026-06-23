@@ -1,5 +1,3 @@
-# Koolatron Rectangle Calculator
+# Koolatron Working Calculator
 
-Perfect rectangular 5-column layout. No empty grid gaps.
-
-SHIFT turns sin/cos/tan into inverse trig on the same buttons.
+Fixed working version.

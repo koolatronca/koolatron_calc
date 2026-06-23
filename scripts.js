@@ -1,28 +1,191 @@
-let display=document.getElementById("display"),historyBox=document.getElementById("history");
-let angleMode="DEG",shiftMode=false,lastAnswer=0,justSolved=false;
-function current(){return display.value}
-function setDisplay(v){display.value=v||"0";display.scrollLeft=display.scrollWidth}
-function endsWithValue(s){return /[0-9.)eπ!]$/.test(s)}
-function appendValue(value){if(justSolved&&/[0-9.(πe]/.test(value)){setDisplay("");justSolved=false}let v=current();if(v==="0"||v==="Error")v="";if((value==="("||value==="π"||value==="e")&&endsWithValue(v))v+="×";setDisplay(v+value)}
-function appendOperator(op){justSolved=false;let symbol=op==="*"?"×":op==="/"?"÷":op;let v=current();if(v==="Error")v="0";if(/[+\-×÷^%]$/.test(v))v=v.slice(0,-1);setDisplay(v+symbol)}
-function appendConstant(name){appendValue(name==="pi"?"π":"e")}
-function clearAll(){setDisplay("0");justSolved=false}
-function backspace(){if(current()==="Error"||current().length<=1||justSolved){clearAll();return}setDisplay(current().slice(0,-1))}
-function useAnswer(){appendValue(String(lastAnswer))}
-function toggleSign(){let v=current();if(v==="0"||v==="Error")return;setDisplay("-("+v+")")}
-function toggleAngleMode(){angleMode=angleMode==="DEG"?"RAD":"DEG";document.getElementById("angleModeBtn").textContent=angleMode}
-function toggleShift(){shiftMode=!shiftMode;document.getElementById("shiftBtn").classList.toggle("active",shiftMode);updateShiftButtons()}
-function updateShiftButtons(){document.getElementById("sinBtn").textContent=shiftMode?"sin⁻¹":"sin";document.getElementById("cosBtn").textContent=shiftMode?"cos⁻¹":"cos";document.getElementById("tanBtn").textContent=shiftMode?"tan⁻¹":"tan";["sinBtn","cosBtn","tanBtn"].forEach(id=>document.getElementById(id).classList.toggle("shift-on",shiftMode))}
-function trigButton(fn){const actual=shiftMode?("a"+fn):fn;smartWrap(actual);if(shiftMode)toggleShift()}
-function getLastExpression(v){let depth=0;for(let i=v.length-1;i>=0;i--){let ch=v[i];if(ch===")")depth++;if(ch==="(")depth--;if(depth===0&&i>0&&/[+\-×÷^]/.test(ch))return{before:v.slice(0,i+1),expr:v.slice(i+1)}}return{before:"",expr:v}}
-function smartWrap(fn){let v=current();if(v==="0"||v==="Error"||v===""){setDisplay(fn+"(");justSolved=false;return}let last=getLastExpression(v);if(!last.expr||/[+\-×÷^(]$/.test(v))setDisplay(v+fn+"(");else setDisplay(last.before+fn+"("+last.expr+")");justSolved=false}
-function smartSquare(){let v=current();if(v==="0"||v==="Error"||/[+\-×÷^(]$/.test(v))return;let last=getLastExpression(v);setDisplay(last.before+"("+last.expr+")²")}
-function smartPower(){let v=current();if(v==="0"||v==="Error"||/[+\-×÷^(]$/.test(v)){appendOperator("^");return}let last=getLastExpression(v);setDisplay(last.before+"("+last.expr+")^")}
-function smartFactorial(){let v=current();if(v==="0"||v==="Error"||/[+\-×÷^(]$/.test(v))return;let last=getLastExpression(v);setDisplay(last.before+"("+last.expr+")!")}
-function factorial(n){if(n<0||!Number.isInteger(n))throw new Error("bad factorial");let ans=1;for(let i=2;i<=n;i++)ans*=i;return ans}
-function closeOpenParentheses(expr){let open=0;for(let ch of expr){if(ch==="(")open++;if(ch===")")open--}while(open>0){expr+=")";open--}return expr}
-function insertMultiplication(expr){return expr.replace(/(\d|\)|π|e)(sin|cos|tan|asin|acos|atan|sqrt|log|ln|abs)/g,"$1×$2").replace(/(\d|\)|π|e)\(/g,"$1×(").replace(/\)(\d|π|e)/g,")×$1").replace(/(π|e)(\d)/g,"$1×$2")}
-function convertToJS(expr){expr=closeOpenParentheses(expr);expr=insertMultiplication(expr);expr=expr.replace(/×/g,"*").replace(/÷/g,"/").replace(/π/g,"Math.PI").replace(/\be\b/g,"Math.E").replace(/\^/g,"**").replace(/²/g,"**2");expr=expr.replace(/(\([^()]*\)|\d+(\.\d+)?)!/g,"factorial($1)");if(angleMode==="DEG"){expr=expr.replace(/sin\(/g,"sinDeg(").replace(/cos\(/g,"cosDeg(").replace(/tan\(/g,"tanDeg(").replace(/asin\(/g,"asinDeg(").replace(/acos\(/g,"acosDeg(").replace(/atan\(/g,"atanDeg(")}else{expr=expr.replace(/sin\(/g,"Math.sin(").replace(/cos\(/g,"Math.cos(").replace(/tan\(/g,"Math.tan(").replace(/asin\(/g,"Math.asin(").replace(/acos\(/g,"Math.acos(").replace(/atan\(/g,"Math.atan(")}return expr.replace(/sqrt\(/g,"Math.sqrt(").replace(/log\(/g,"Math.log10(").replace(/ln\(/g,"Math.log(").replace(/abs\(/g,"Math.abs(")}
-function sinDeg(x){return Math.sin(x*Math.PI/180)}function cosDeg(x){return Math.cos(x*Math.PI/180)}function tanDeg(x){return Math.tan(x*Math.PI/180)}function asinDeg(x){return Math.asin(x)*180/Math.PI}function acosDeg(x){return Math.acos(x)*180/Math.PI}function atanDeg(x){return Math.atan(x)*180/Math.PI}
-function calculate(){try{let raw=current();if(raw==="Error")return;let jsExpr=convertToJS(raw);let result=Function("factorial","sinDeg","cosDeg","tanDeg","asinDeg","acosDeg","atanDeg",'"use strict"; return ('+jsExpr+')')(factorial,sinDeg,cosDeg,tanDeg,asinDeg,acosDeg,atanDeg);if(!Number.isFinite(result))throw new Error("bad result");let clean=Number.isInteger(result)?String(result):String(Number(result.toFixed(10)));historyBox.value+=raw+" = "+clean+"\\n";historyBox.scrollTop=historyBox.scrollHeight;lastAnswer=clean;setDisplay(clean);justSolved=true}catch(e){setDisplay("Error");justSolved=true}}
-document.addEventListener("keydown",e=>{const k=e.key;if(/[0-9.()]/.test(k))appendValue(k);else if(k==="+")appendOperator("+");else if(k==="-")appendOperator("-");else if(k==="*")appendOperator("*");else if(k==="/")appendOperator("/");else if(k==="^")appendOperator("^");else if(k==="Enter")calculate();else if(k==="Backspace")backspace();else if(k==="Escape")clearAll()});
+const display = document.getElementById("display");
+const historyBox = document.getElementById("history");
+let angle = "DEG";
+let shift = false;
+let ans = 0;
+let solved = false;
+
+function val(){ return display.value; }
+function setVal(v){ display.value = v || "0"; display.scrollLeft = display.scrollWidth; }
+function isEndValue(s){ return /[0-9.)πe!]$/.test(s); }
+
+function press(x){
+  let v = val();
+  if (solved && /[0-9.(πe]/.test(x)) { v = ""; solved = false; }
+  if (v === "0" || v === "Error") v = "";
+  if ((x === "(" || x === "π" || x === "e") && isEndValue(v)) v += "×";
+  setVal(v + x);
+}
+
+function op(x){
+  solved = false;
+  let symbol = x === "*" ? "×" : x === "/" ? "÷" : x;
+  let v = val();
+  if (v === "Error") v = "0";
+  if (/[+\-×÷^%]$/.test(v)) v = v.slice(0, -1);
+  setVal(v + symbol);
+}
+
+function clearAll(){ setVal("0"); solved = false; }
+function backspace(){
+  if (val() === "Error" || val().length <= 1 || solved) { clearAll(); return; }
+  setVal(val().slice(0, -1));
+}
+function useAns(){ press(String(ans)); }
+
+function toggleAngle(){
+  angle = angle === "DEG" ? "RAD" : "DEG";
+  document.getElementById("angleBtn").textContent = angle;
+}
+
+function toggleShift(){
+  shift = !shift;
+  document.getElementById("shiftBtn").classList.toggle("active", shift);
+  document.getElementById("sinBtn").textContent = shift ? "sin⁻¹" : "sin";
+  document.getElementById("cosBtn").textContent = shift ? "cos⁻¹" : "cos";
+  document.getElementById("tanBtn").textContent = shift ? "tan⁻¹" : "tan";
+  document.getElementById("sinBtn").classList.toggle("shift", shift);
+  document.getElementById("cosBtn").classList.toggle("shift", shift);
+  document.getElementById("tanBtn").classList.toggle("shift", shift);
+}
+
+function trig(name){
+  wrap(shift ? "a" + name : name);
+  if (shift) toggleShift();
+}
+
+function lastPart(v){
+  let depth = 0;
+  for (let i = v.length - 1; i >= 0; i--){
+    const c = v[i];
+    if (c === ")") depth++;
+    if (c === "(") depth--;
+    if (depth === 0 && i > 0 && /[+\-×÷^]/.test(c)){
+      return { before: v.slice(0, i + 1), part: v.slice(i + 1) };
+    }
+  }
+  return { before: "", part: v };
+}
+
+function wrap(fn){
+  let v = val();
+  if (v === "0" || v === "Error" || v === "" || /[+\-×÷^(]$/.test(v)){
+    setVal((v === "0" || v === "Error" ? "" : v) + fn + "(");
+    solved = false;
+    return;
+  }
+  const last = lastPart(v);
+  setVal(last.before + fn + "(" + last.part + ")");
+  solved = false;
+}
+
+function square(){
+  let v = val();
+  if (v === "0" || v === "Error" || /[+\-×÷^(]$/.test(v)) return;
+  const last = lastPart(v);
+  setVal(last.before + "(" + last.part + ")²");
+}
+
+function power(){
+  let v = val();
+  if (v === "0" || v === "Error" || /[+\-×÷^(]$/.test(v)) { op("^"); return; }
+  const last = lastPart(v);
+  setVal(last.before + "(" + last.part + ")^");
+}
+
+function fact(){
+  let v = val();
+  if (v === "0" || v === "Error" || /[+\-×÷^(]$/.test(v)) return;
+  const last = lastPart(v);
+  setVal(last.before + "(" + last.part + ")!");
+}
+
+function factorial(n){
+  if (n < 0 || !Number.isInteger(n)) throw new Error("factorial");
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+function closeBrackets(s){
+  let open = 0;
+  for (const c of s){
+    if (c === "(") open++;
+    if (c === ")") open--;
+  }
+  while (open > 0){ s += ")"; open--; }
+  return s;
+}
+
+function multiplyInsert(s){
+  return s
+    .replace(/(\d|\)|π|e)(sin|cos|tan|asin|acos|atan|sqrt|log|ln|abs)/g, "$1×$2")
+    .replace(/(\d|\)|π|e)\(/g, "$1×(")
+    .replace(/\)(\d|π|e)/g, ")×$1")
+    .replace(/(π|e)(\d)/g, "$1×$2");
+}
+
+function toJS(s){
+  s = closeBrackets(s);
+  s = multiplyInsert(s);
+  s = s.replace(/×/g, "*").replace(/÷/g, "/");
+  s = s.replace(/π/g, "Math.PI").replace(/\be\b/g, "Math.E");
+  s = s.replace(/\^/g, "**").replace(/²/g, "**2");
+  s = s.replace(/(\([^()]*\)|\d+(\.\d+)?)!/g, "factorial($1)");
+
+  if (angle === "DEG"){
+    s = s.replace(/asin\(/g, "asinDeg(").replace(/acos\(/g, "acosDeg(").replace(/atan\(/g, "atanDeg(");
+    s = s.replace(/sin\(/g, "sinDeg(").replace(/cos\(/g, "cosDeg(").replace(/tan\(/g, "tanDeg(");
+  } else {
+    s = s.replace(/asin\(/g, "Math.asin(").replace(/acos\(/g, "Math.acos(").replace(/atan\(/g, "Math.atan(");
+    s = s.replace(/sin\(/g, "Math.sin(").replace(/cos\(/g, "Math.cos(").replace(/tan\(/g, "Math.tan(");
+  }
+
+  s = s.replace(/sqrt\(/g, "Math.sqrt(");
+  s = s.replace(/log\(/g, "Math.log10(");
+  s = s.replace(/ln\(/g, "Math.log(");
+  s = s.replace(/abs\(/g, "Math.abs(");
+  return s;
+}
+
+function sinDeg(x){ return Math.sin(x * Math.PI / 180); }
+function cosDeg(x){ return Math.cos(x * Math.PI / 180); }
+function tanDeg(x){ return Math.tan(x * Math.PI / 180); }
+function asinDeg(x){ return Math.asin(x) * 180 / Math.PI; }
+function acosDeg(x){ return Math.acos(x) * 180 / Math.PI; }
+function atanDeg(x){ return Math.atan(x) * 180 / Math.PI; }
+
+function calculate(){
+  try {
+    const raw = val();
+    const js = toJS(raw);
+    const result = Function(
+      "factorial","sinDeg","cosDeg","tanDeg","asinDeg","acosDeg","atanDeg",
+      '"use strict"; return (' + js + ')'
+    )(factorial, sinDeg, cosDeg, tanDeg, asinDeg, acosDeg, atanDeg);
+
+    if (!Number.isFinite(result)) throw new Error("result");
+    const clean = Number.isInteger(result) ? String(result) : String(Number(result.toFixed(10)));
+    historyBox.value += raw + " = " + clean + "\\n";
+    historyBox.scrollTop = historyBox.scrollHeight;
+    ans = clean;
+    setVal(clean);
+    solved = true;
+  } catch(e) {
+    setVal("Error");
+    solved = true;
+  }
+}
+
+document.addEventListener("keydown", e => {
+  const k = e.key;
+  if (/[0-9.()]/.test(k)) press(k);
+  else if (k === "+") op("+");
+  else if (k === "-") op("-");
+  else if (k === "*") op("*");
+  else if (k === "/") op("/");
+  else if (k === "^") op("^");
+  else if (k === "Enter") calculate();
+  else if (k === "Backspace") backspace();
+  else if (k === "Escape") clearAll();
+});
